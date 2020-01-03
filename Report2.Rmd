@@ -1,48 +1,49 @@
 ---
-title: "Report2"
-author: "Ivan Muñoz Lois"
+title: "Proyecto Data Driven Security"
+author: "Ivan Muñoz Lois, Stela-Mihaela Chioveanu "
 output: html_document
 ---
-
+ 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
 library(readr)
 library(ggplot2)
-
 ```
 
-##1. Carga del archivo con la fuente de datos
+### 1. Carga del archivo con la fuente de datos
 
 Primero de todo, cargamos el archivo que contiene las vulnerabilidades encontradas tras realizar un scan con Qualys
 
-```{r}
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
 inputReportDf <- read_csv("C:/Users/ivanm/Desktop/Master/5. Data Driven Security/Scan_Results_abtes2vm_20191217_scan_1574870445_41138.csv",
 skip = 6)
 ```
 
-##2. Filtrado del dataframe
+### 2. Filtrado del dataframe
 
 Una vez tenemos nuestro dataframe, procedemos a filtrar para quedarnos únicamente con aquellos datos que serán relevantes para nuestro caso de estudio.
 
-```{r}
+```{r, warning=FALSE}
 mydf <- inputReportDf[,c("IP", "QID", "Type", "Severity", "CVE ID")]
 ```
 
 Nos hemos quedado con los siguientes campos:
 
-```{r}
+```{r, warning=FALSE, echo=FALSE}
 colnames(mydf)
 ```
 Podemos observar un ejemplo de estos datos:
 
-```{r}
-head(mydf,5)
+```{r, warning=FALSE, echo=FALSE}
+library(kableExtra)
+kable(head(mydf,5), align=rep('c', 5)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F)
 ```
 
 De la siguiente manera se puede construir un dataframe en el que tratar después cada tipo de dato como sea necesario por coerción
 
-```{r}
+```{r, warning=FALSE}
 a1 <- inputReportDf[,c("IP")]
 b2 <- inputReportDf[,c("QID")]
 c3 <- inputReportDf[,c("Type")]
@@ -52,26 +53,32 @@ e5 <- inputReportDf[,c("CVE ID")]
 test <- data.frame(a1,b2,c3,d4,e5, stringsAsFactors = F)
 ```
 
-##3. Clasificamos en una tabla los tipos de vulnerabilidad y severidad, así como un contador que indica cuantos casos se han identificado
+### 3. Clasificamos en una tabla los tipos de vulnerabilidad y severidad, así como un contador que indica cuantos casos se han identificado
 
-```{r}
+```{r, warning=FALSE}
 plotableType <- as.data.frame((table(test$Type, test$Severity)))
 colnames(plotableType) <- c("Type", "Severity", "Count")
 ```
 Veamos la tabla que obtenemos, para poder entender la gráfica que vendrá a continuación:
 
-```{r}
-head(plotableType)
+```{r, warning=FALSE, echo=FALSE}
+library(kableExtra)
+#head(plotableType)
+#knitr::kable(plotableType, align = 'c')
+kable(plotableType, align=rep('c', 3)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F)
 ```
-##4. Mostramos un gráfico que representa los valores de la tabla
-```{r}
+
+### 4. Mostramos un gráfico que representa los valores de la tabla
+
+```{r, fig.align='center', warning=FALSE, echo=FALSE}
 plot1 <- ggplot(plotableType, aes(x=Type, y=Count)) + geom_bar(stat = "identity")
 
 plot(plot1)
 ```
 
-##5. Mostramos un gráfico que representa el total de vulns encontradas en función de su tipo y severidad
-```{r}
+### 5. Mostramos un gráfico que representa el total de vulns encontradas en función de su tipo y severidad
+```{r, fig.align='center', warning=FALSE, echo=FALSE}
 plot2 <- ggplot(plotableType, aes(x=Count, y=Severity)) + geom_point(aes(colour= factor(Type))) + scale_colour_manual(values = c("red", "blue", "green"))
 
 plot(plot2)
