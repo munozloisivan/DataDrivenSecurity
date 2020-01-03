@@ -39,5 +39,9 @@ colnames(plotableType) <- c("Type", "Severity", "Count")
 #Mostramos un gráfico que representa los valores de la tabla
 ggplot(plotableType, aes(x=Type, y=Count)) + geom_bar(stat = "identity")
 
+#Mostramos un gráfico que representa el total de vulns encontradas en función de su tipo y severidad
+ggplot(plotableType, aes(x=Count, y=Severity)) + geom_point(aes(colour= factor(Type))) + scale_colour_manual(values = c("red", "blue", "green"))
+
+
 
 
