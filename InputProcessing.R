@@ -41,11 +41,11 @@ colnames(plotTable) <- c("Type", "Severity", "Count")
 head(plotTable,3)
 
 #Mostramos un gráfico que representa los valores de la tabla
-plot1 <- ggplot(plotTable, aes(x=Type, y=Count)) + geom_bar(stat = "identity") + scale_fill_manual(values = c("red", "blue", "green"))
+plot1 <- ggplot(plotTable, aes(x=Type, y=Count)) + geom_bar(stat = "identity") + scale_fill_manual(values = c("green", "blue", "red"))
 plot(plot1)
 
 #Mostramos un gráfico que representa el total de vulns encontradas en función de su tipo y severidad
-ggplot(plotTable, aes(x=Count, y=Severity)) + geom_point(aes(colour= Type)) + scale_colour_manual(values = c("red", "blue", "green"))
+ggplot(plotTable, aes(x=Count, y=Severity)) + geom_point(aes(colour= Type)) + scale_colour_manual(values = c("green", "blue", "red"))
 
 
 #
@@ -70,6 +70,13 @@ View(dfPOC)
 
 #Qualys classifies vulnerabilities according to QID, simply a unique identifier given to that exact issue
 
+#Creamos una tabla que clasifica por tipo, CVSS y un contador
+plotTablePOC <- as.data.frame((table(dfPOC$Type, dfPOC$`CVSS Base`)))
+#Asignamos nombres a cada columna de la tabla
+colnames(plotTablePOC) <- c("Type", "CVSS Base", "Count")
+#Mostramos un gráfico que representa los valores de la tabla
+plot1POC <- ggplot(plotTablePOC, aes(x=Count, y=`CVSS Base`)) + geom_point(aes(colour= Type)) + scale_colour_manual(values = c("green", "blue", "red"))
+plot(plot1POC)
 
 
 #
@@ -80,7 +87,7 @@ View(dfPOC)
 #
 #
 #
-# ---> Inicio Prueba de código en funciones a ser llamadas desde Report.Rmd <---
+# ---> Inicio Prueba de implementación del código en funciones a ser llamadas desde Report.Rmd <---
 
 # cpe.file <- "C:/Users/ivanm/Desktop/Master/5. Data Driven Security/Scan_Results_abtes2vm_20191217_scan_1574870445_41138.csv"
 
