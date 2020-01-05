@@ -31,7 +31,7 @@ Primero de todo, cargamos el archivo que contiene las vulnerabilidades encontrad
 *El archivo ha sido descargado como en formato csv desde la [web de Qualys](https://qualysguard.qg2.apps.qualys.com/fo/scan/scanList.php)*
 
 ```{r, warning=FALSE, message=FALSE, echo=FALSE}
-inputReportDf <- read_csv("C:/Users/ivanm/Desktop/Master/5. Data Driven Security/Scan_Results_abtes2vm_20191217_scan_1574870445_41138.csv",
+inputReportDf <- read_csv("Scan_Results_abtes2vm_20191217_scan_1574870445_41138.csv",
 skip = 6)
 ```
 
@@ -117,7 +117,7 @@ Cargamos ahora el fichero que contiene la información de la Knowledge Base de Q
 *El archivo ha sido descargado como en formato csv desde la [web de Qualys](https://qualysguard.qg2.apps.qualys.com/fo/tools/kbase.php)*
 
 ```{r, warning=FALSE, message=FALSE, echo=FALSE}
-KnowledgeBaseDfPOC <- read_csv("C:/Users/ivanm/Desktop/Master/5. Data Driven Security/DL_vulnerabilities_abtes2vm_20191217.csv", skip = 3)
+KnowledgeBaseDfPOC <- read_csv("DL_vulnerabilities_abtes2vm_20191217.csv", skip = 3)
 ```
 
 ## Filtrado del dataframe

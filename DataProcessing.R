@@ -2,14 +2,14 @@ library(readr)
 library(ggplot2)
 
 #Cargamos el archivo que contiene los datos del scan realizado
-inputReportDf <- read_csv("C:/Users/ivanm/Desktop/Master/5. Data Driven Security/Scan_Results_abtes2vm_20191217_scan_1574870445_41138.csv",
+inputReportDf <- read_csv("Scan_Results_abtes2vm_20191217_scan_1574870445_41138.csv",
 skip = 6)
-View(inputReportDf)
+#View(inputReportDf)
 
 #Filtramos el Report que extraemos para quedarnos únicamente
 #con aquellas columnas que nos interesan
 mydf <- inputReportDf[,c("IP", "QID", "Type", "Severity", "CVE ID")]
-View(mydf)
+#View(mydf)
 
 #Nos quedamos con los siguientes campos:
 colnames(mydf)
@@ -31,7 +31,7 @@ e5 <- inputReportDf[,c("CVE ID")]
 #Una vez hechas, construimos de nuevo el dataframe con el que trabajaremos
 test <- data.frame(a1,b2,c3,d4,e5, stringsAsFactors = F)
 #Comprobamos que esté correcto
-View(test)
+#View(test)
 
 #Creamos una tabla que clasifica por tipo, severidad y un contador
 plotTable <- as.data.frame((table(test$Type, test$Severity)))
@@ -53,20 +53,20 @@ ggplot(plotTable, aes(x=Count, y=Severity)) + geom_point(aes(colour= Type)) + sc
 # ---> Prueba de Concepto <---
 
 # Leer la KDB, filtrar el dataframe y posteriomente poder relacionar ambos dataframes para poder obtener información del CVSS
-KnowledgeBaseDfPOC <- read_csv("C:/Users/ivanm/Desktop/Master/5. Data Driven Security/DL_vulnerabilities_abtes2vm_20191217.csv", skip = 3)
+KnowledgeBaseDfPOC <- read_csv("DL_vulnerabilities_abtes2vm_20191217.csv", skip = 3)
 KDB_dfPOC <- KnowledgeBaseDfPOC[,c("QID", "Category", "Modified", "Published", "CVSS Base", "CVE ID")]
-View(KDB_dfPOC)
+#View(KDB_dfPOC)
 
 #Eliminar aquellos que no tengan valor CVSS
 KDB_dfPOC_clean <- filter(KDB_dfPOC, KDB_dfPOC$`CVSS Base` != '\'-')
-View(KDB_dfPOC_clean)
+#View(KDB_dfPOC_clean)
 
 #Juntamos los 2 DataFrame para poder relacionar datos
 dfPOC <- merge(test, KDB_dfPOC_clean, by ="QID")
 
 #Filtramos de nuevo os datos, dado que tenemos algunos como la columna CVE.ID dado que es igual en ambos dataframes
 dfPOC <- dfPOC[,c("QID", "IP", "Type", "Severity", "CVSS Base", "CVE ID")]
-View(dfPOC)
+#View(dfPOC)
 
 #Qualys classifies vulnerabilities according to QID, simply a unique identifier given to that exact issue
 
