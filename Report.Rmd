@@ -1,7 +1,17 @@
 ---
-title: "Report"
-output: html_document
+title: "Proyecto Data Driven Security"
+author: "Ivan Muñoz Lois"
+date: "03/01/2020"
+output:
+  pdf_document: default
+  html_document: default
 ---
+
+```{r}
+source("InputProcessing.R")
+df <- ParseCPEData("C:/Users/ivanm/Desktop/Master/5. Data Driven Security/Scan_Results_abtes2vm_20191217_scan_1574870445_41138.csv")
+
+```
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -16,8 +26,6 @@ When you click the **Knit** button a document will be generated that includes bo
 ```{r cars}
 summary(cars)
 ```
-
-##"./ ruta del fichero"
 
 ## Including Plots
 
