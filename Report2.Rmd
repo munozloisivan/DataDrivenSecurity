@@ -12,9 +12,13 @@ library(ggplot2)
 library(dplyr)
 ```
 
+## 1. Tratamiento de datos a partir de un scan realizado con Qualys
+
 ### 1.1 Carga del archivo con la fuente de datos
 
 Primero de todo, cargamos el archivo que contiene las vulnerabilidades encontradas tras realizar un scan con Qualys
+
+*El archivo ha sido descargado como en formato csv desde la [web de Qualys](https://qualysguard.qg2.apps.qualys.com/fo/scan/scanList.php)*
 
 ```{r, warning=FALSE, message=FALSE, echo=FALSE}
 inputReportDf <- read_csv("C:/Users/ivanm/Desktop/Master/5. Data Driven Security/Scan_Results_abtes2vm_20191217_scan_1574870445_41138.csv",
@@ -25,7 +29,7 @@ skip = 6)
 
 Una vez tenemos nuestro dataframe, procedemos a filtrar para quedarnos únicamente con aquellos datos que serán relevantes para nuestro caso de estudio.
 
-```{r, warning=FALSE}
+```{r, warning=FALSE, echo=FALSE}
 mydf <- inputReportDf[,c("IP", "QID", "Type", "Severity", "CVE ID")]
 ```
 
@@ -34,17 +38,20 @@ Nos hemos quedado con los siguientes campos:
 ```{r, warning=FALSE, echo=FALSE}
 colnames(mydf)
 ```
+
 Podemos observar un ejemplo de estos datos:
 
-```{r, warning=FALSE, echo=FALSE}
+```{r, warning=FALSE, echo=FALSE, message=FALSE}
 library(kableExtra)
 kable(head(mydf,5), align=rep('c', 5)) %>%
   kable_styling(bootstrap_options = c("striped", "hover"), full_width = F)
 ```
 
-De la siguiente manera se puede construir un dataframe en el que tratar después cada tipo de dato como sea necesario por coerción
+<!-- De la siguiente manera, podríamos tratar por separado los datos necesarios por coerción y posteriormente construir un dataframe con dichos datos. -->
 
-```{r, warning=FALSE}
+<!-- *Por el momento, para los resultados que hemos tratado de analizar no nos ha sido necesario realizar ninguna modificación en la tipologia de datos inicial.* -->
+
+```{r, warning=FALSE, echo=FALSE}
 a1 <- inputReportDf[,c("IP")]
 b2 <- inputReportDf[,c("QID")]
 c3 <- inputReportDf[,c("Type")]
@@ -54,13 +61,16 @@ e5 <- inputReportDf[,c("CVE ID")]
 test <- data.frame(a1,b2,c3,d4,e5, stringsAsFactors = F)
 ```
 
-### 1.3 Clasificamos en una tabla los tipos de vulnerabilidad y severidad, así como un contador que indica cuantos casos se han identificado
+### 1.3 Clasificación en función del tipo de vulnerabilidad y severidad
+
+Clasificamos en una tabla los tipos de vulnerabilidad y severidad, mostrando un contador que indica cuantos casos se han identificado
 
 ```{r, warning=FALSE}
 plotableType <- as.data.frame((table(test$Type, test$Severity)))
 colnames(plotableType) <- c("Type", "Severity", "Count")
 ```
-Veamos la tabla que obtenemos, para poder entender la gráfica que vendrá a continuación:
+
+Veamos la tabla que obtenemos, para poder entender la relación con la gráfica que vendrá a continuación:
 
 ```{r, warning=FALSE, echo=FALSE}
 library(kableExtra)
@@ -70,7 +80,9 @@ kable(plotableType, align=rep('c', 3)) %>%
   kable_styling(bootstrap_options = c("striped", "hover"), full_width = F)
 ```
 
-### 1.4 Mostramos un gráfico que representa los valores de la tabla
+### 1.4 Visualización gráfica de la clasificación por tipo de vulnerabilidad
+
+Mostramos un gráfico que representa los valores de la tabla
 
 ```{r, fig.align='center', warning=FALSE, echo=FALSE}
 plot1 <- ggplot(plotableType, aes(x=Type, y=Count)) + geom_bar(stat = "identity")
@@ -78,16 +90,21 @@ plot1 <- ggplot(plotableType, aes(x=Type, y=Count)) + geom_bar(stat = "identity"
 plot(plot1)
 ```
 
-### 1.5 Mostramos un gráfico que representa el total de vulns encontradas en función de su tipo y severidad
+### 1.5 Visualización gráfica de la clasificación por tipo de vulnerabilidad, severidad y total de casuísticas identificadas.
+
+Mostramos un gráfico que representa el **total de vulns encontradas en función de su tipo y severidad**
+
 ```{r, fig.align='center', warning=FALSE, echo=FALSE}
-plot2 <- ggplot(plotableType, aes(x=Count, y=Severity)) + geom_point(aes(colour= factor(Type))) + scale_colour_manual(values = c("red", "blue", "green"))
+plot2 <- ggplot(plotableType, aes(x=Count, y=Severity)) + geom_point(aes(colour= Type)) + scale_colour_manual(values = c("green", "blue", "red"))
 
 plot(plot2)
 ```
 
-## 2. Relación de los datos obtenidos en el scan de Qualys con información disponible en la Knowledge Base
+## 2. Relación de los datos obtenidos en el scan con la Knowledge Base de Qualys
 
-Cargamos el fichero que contiene la información de la Knowledge Base de Qualys en un dataframe
+Cargamos ahora el fichero que contiene la información de la Knowledge Base de Qualys en un dataframe
+
+*El archivo ha sido descargado como en formato csv desde la [web de Qualys](https://qualysguard.qg2.apps.qualys.com/fo/tools/kbase.php)*
 
 ```{r, warning=FALSE, message=FALSE, echo=FALSE}
 KnowledgeBaseDfPOC <- read_csv("C:/Users/ivanm/Desktop/Master/5. Data Driven Security/DL_vulnerabilities_abtes2vm_20191217.csv", skip = 3)
@@ -97,37 +114,49 @@ KnowledgeBaseDfPOC <- read_csv("C:/Users/ivanm/Desktop/Master/5. Data Driven Sec
 
 Una vez tenemos nuestro dataframe, procedemos a filtrar para quedarnos únicamente con aquellos datos que serán relevantes las relaciones que nos interesan realizar.
 
-```{r, warning=FALSE}
+```{r, warning=FALSE, echo=FALSE}
 KDB_dfPOC <- KnowledgeBaseDfPOC[,c("QID", "Category", "Modified", "Published", "CVSS Base", "CVE ID")]
 ```
 
-```{r, warning=FALSE, echo=FALSE}
-#Eliminar aquellos que no tengan valor CVSS
-KDB_dfPOC_clean <- filter(KDB_dfPOC, KDB_dfPOC$`CVSS Base` != '\'-')
-```
 Nos quedamos con los siguientes campos:
 
 ```{r, warning=FALSE, echo=FALSE}
 colnames(KDB_dfPOC)
 ```
 
+Dado que nos interesará mostrar una relación entre lo que se ha detectado en el scan e información disponible en la KnowledgeBase, en este caso queremos obtener una relación para conocer en base a un QID que CVSS le corresponde, **eliminamos todos aquellas entradas que no tengan valor CVSS en la KnowledgeBase.**
+
+```{r, warning=FALSE, echo=FALSE}
+#Eliminar aquellos que no tengan valor CVSS
+KDB_dfPOC_clean <- filter(KDB_dfPOC, KDB_dfPOC$`CVSS Base` != '\'-')
+```
+
 ### 2.2 Juntamos ambos input (El scan de Qualys y la Knowlegdge Base) en un mismo dataframe 
-Los relacionamos por la columna QID que es común en ambos datos y nos permitirá poder relacionarlos correctamente.
+
+Los relacionamos por la columna QID que es común en ambos datos y nos permitirá obtener una correcta correlación entre ellos.
 
 ```{r, warning=FALSE, echo=FALSE}
 dfPOC <- merge(test, KDB_dfPOC_clean, by ="QID")
 ```
 
-Filtramos de nuevo, dado que existen algunas columnas como CVE ID que están duplicadas (ambos dataframes la contenian por igual)
+Filtramos de nuevo para tener unos datos que se adapten más a nuestras  necesidades, dado que existíann algunas columnas como CVE ID que están duplicadas *(ambos dataframes la contenian por igual)*
+
 ```{r, warning=FALSE, echo=FALSE}
 dfPOC <- dfPOC[,c("QID", "IP", "Type", "Severity", "CVSS Base", "CVE ID")]
 ```
-Nos queda finalmente un dataframe con los siguientes campos:
+
+Nos quedan finalmente los siguientes campos:
+
 ```{r, warning=FALSE, echo=FALSE}
 colnames(dfPOC)
 ```
 
-### 2.3 Creamos una tabla que clasifica por tipo, CVSS y un contador
+### 2.3 Clasifica por tipo, CVSS y un contador
+
+Clasificamos las vulnerabilidades encontradas por tipo, su valor CVSS y un contador para cada casuística. 
+
+Podemos observar la clasificación en la tabla a continuación:
+
 ```{r, warning=FALSE, echo=FALSE}
 plotTablePOC <- as.data.frame((table(dfPOC$Type, dfPOC$`CVSS Base`)))
 #Asignamos nombres a cada columna de la tabla
@@ -140,7 +169,10 @@ kable(plotTablePOC, align=rep('c', 3)) %>%
   kable_styling(bootstrap_options = c("striped", "hover"), full_width = F)
 ```
 
-### 2.4 Mostramos un gráfico que representa el número de vulnerabilidades encontradas y su CVSS según la Knowledge Base de Qualys
+### 2.4 Visualización gráfica de la clasificación por tipo de vulnerabilidad, CVSS y total de casuísticas identificadas. 
+
+Mostramos un gráfico que representa el número de vulnerabilidades encontradas en el scan y su CVSS según la Knowledge Base de Qualys
+
 ```{r, fig.align='center', warning=FALSE, echo=FALSE}
 plot1POC <- ggplot(plotTablePOC, aes(x=Count, y=`CVSS Base`)) + geom_point(aes(colour= Type)) + scale_colour_manual(values = c("green", "blue", "red"))
 plot(plot1POC)
