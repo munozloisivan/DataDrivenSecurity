@@ -4,9 +4,7 @@
 * Ivan Muñoz Lois
 * Stela-Mihaela Chioveanu
 
-MsC Cybersecurity Management - UPC
-
-El *report de este proyecto es accesible* directamente desde: [RPubs](http://rpubs.com/munozloisivan/ProjectReportDDS)
+El **report de este proyecto es accesible** directamente desde: [RPubs](http://rpubs.com/munozloisivan/ProjectReportDDS)
 
 ## ¿En qué consiste el proyecto?
 
@@ -18,13 +16,17 @@ El proyecto está enfocado en la parte de **Vulnerability Management** cogiendo 
 
 2. [Knowledge Base de Qualys](https://qualysguard.qg2.apps.qualys.com/fo/tools/kbase.php)
 
---> Por una parte, cargamos los datos que obtenemos de un escaneo de vulnerabilidades realizado con Qualys, filtramos para quedarnos con aquellos campos más interesantes para nuestros posibles casos de estudio y los tratamos.
+* Por una parte, cargamos los datos que obtenemos de un escaneo de vulnerabilidades realizado con Qualys, filtramos para quedarnos con aquellos campos más     interesantes para nuestros posibles casos de estudio y los tratamos.
+  Mostramos en este caso una clasificación en función de los              diferentes   tipos de vulnerabilidades identificadas (Ig, Practice       y Vuln) y   su severidad.
+* Por otra parte, cargamos la KnowledgeBase de Qualys y creamos un nuevo dataframe en el que relacionamos los datos obtenidos en el escaneo de                 vulnerabilidades y la información que nos aporta la KnowledgeBase a partir del campo 'QID' que tienen en común.
+  De esta manera, podemos obtener una clasifiación por tipo de vulnerabilidad identificada y CVSS.
+      
+#### Próximos pasos
 
-      Mostramos en este caso una clasificación en función de los              diferentes   tipos de vulnerabilidades identificadas (Ig, Practice       y Vuln) y su     severidad.
-  
---> Por otra parte, cargamos la KnowledgeBase de Qualys y creamos un nuevo dataframe en el que relacionamos los datos obtenidos en el escaneo de vulnerabilidades y la información que nos aporta la KnowledgeBase a partir del campo 'QID' que tienen en común.
+En los datos filtrados se pueden apreciar más columnas que no hemos llegado a utilizar por el momento, esto es debido a que a teníamos bastantes ideas a ir realizando en paralelo a lo largo del proyecto en función del tiempo disponible. No obstante, hemos preferido disponer de una base fierme y un report elegante y dejar a futuras versiones de mejora aspectos como podrían ser entre otras:
 
-      De esta manera, podemos obtener una clasifiación por tipo de            vulnerabilidad identificada y CVSS.
+* Histograma de vulnerabilidades publicadas en la KnowledgeBase en tiempo 
+* Geolocalización de IPs encontradas tras un escaneo de vulnerabilidades
 
 ## ¿Cómo puedo ejecutarlo?
 
@@ -44,6 +46,6 @@ library(dplyr)
 
 ### License
 
-This project is licensed under the  - see the [LICENSE.md](https://github.com/munozloisivan/DataDrivenSecurity/blob/master/LICENSE) file for details
+Este proyecto se encuentra bajo licencia *GNU General Public License v2.0* - ver fichero [LICENSE.md](https://github.com/munozloisivan/DataDrivenSecurity/blob/master/LICENSE) file for details
 
 
